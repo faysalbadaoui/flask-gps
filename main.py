@@ -1,7 +1,9 @@
 # backend/app.py
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 latest_location = {'lat': 0.0, 'lon': 0.0}
 
 @app.route('/gps', methods=['POST'])
