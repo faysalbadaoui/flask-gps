@@ -12,6 +12,7 @@ def gps():
     data = request.json
     latest_location['lat'] = data.get('latitude')
     latest_location['lon'] = data.get('longitude')
+    latest_location['speed'] = data.get('speed', 0.0)
     return jsonify({'status': 'OK'})
 
 @app.route('/location', methods=['GET'])
