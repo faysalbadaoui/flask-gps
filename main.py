@@ -1,23 +1,20 @@
-# backend/app.py
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
-CORS(app)
-latest_location = {'lat': 0.0, 'lon': 0.0}
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-@app.route('/gps', methods=['POST'])
-def gps():
-    global latest_location
-    data = request.json
-    latest_location['lat'] = data.get('latitude')
-    latest_location['lon'] = data.get('longitude')
-    latest_location['speed'] = data.get('speed', 0.0)
-    return jsonify({'status': 'OK'})
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
 
-@app.route('/location', methods=['GET'])
-def location():
-    return jsonify(latest_location)
+@socketio.on('gps_data')
+def handle_gps_data(data):
+    print("Received GPS:", data)
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("Client disconnected")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
